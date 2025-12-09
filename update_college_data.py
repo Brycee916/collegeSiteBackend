@@ -170,17 +170,65 @@ def update_colleges(limit=None, test_mode=True):
         print(f"  Failed/Not found: {failed_count}")
         print(f"{'='*60}\n")
 
+def seed_database(limit=100):
+    """Seed database with initial colleges"""
+    print(f"\nExample: Seeding database with {limit} colleges...")
+    engine = create_engine(DATABASE_URL)
+    
+    params = {
+        'api_key': API_KEY,
+        'fields': 'id,school.name,school.city,school.state',
+        '_per_page': 100,
+        '_sort': 'latest.student.size:desc' # Get largest schools first
+    }
+    
+    with engine.connect() as conn:
+        try:
+            response = requests.get(BASE_URL, params=params, timeout=10)
+            response.raise_for_status()
+            data = response.json()
+            
+            count = 0
+            for item in data.get('results', []):
+                if count >= limit: break
+                
+                name = item.get('school.name')
+                city = item.get('school.city')
+                state = item.get('school.state')
+                location = f"{city}, {state}" if city and state else city
+                
+                # Check if exists
+                exists = conn.execute(text("SELECT id FROM colleges WHERE name = :name"), {'name': name}).fetchone()
+                
+                if not exists:
+                    conn.execute(text("INSERT INTO colleges (name, location) VALUES (:name, :location)"), 
+                               {'name': name, 'location': location})
+                    print(f"  + Added: {name}")
+                    count += 1
+                else:
+                    print(f"  . Skpping (exists): {name}")
+            
+            conn.commit()
+            print(f"✅ Seeding complete. Added {count} colleges.")
+            
+        except Exception as e:
+            print(f"❌ Seeding failed: {e}")
+
 if __name__ == "__main__":
     import sys
     
-    # Test mode: update only 10 colleges
-    if len(sys.argv) > 1 and sys.argv[1] == '--full':
-        print("⚠️  FULL UPDATE MODE - This will update ALL colleges!")
-        confirm = input("Type 'yes' to confirm: ")
-        if confirm.lower() == 'yes':
-            update_colleges(limit=None, test_mode=False)
-        else:
-            print("Cancelled.")
+    if len(sys.argv) > 1:
+        if sys.argv[1] == '--seed':
+            seed_database(limit=100)
+        elif sys.argv[1] == '--full':
+            print("⚠️  FULL UPDATE MODE - This will update ALL colleges!")
+            confirm = input("Type 'yes' to confirm: ")
+            if confirm.lower() == 'yes':
+                update_colleges(limit=None, test_mode=False)
+            else:
+                print("Cancelled.")
     else:
+        print("Running in TEST MODE (50 colleges)")
         print("Use --full flag for full update")
+        print("Use --seed flag to populate empty database")
         update_colleges(limit=50, test_mode=True)
