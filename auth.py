@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, timedelta
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -9,7 +10,7 @@ from sqlalchemy.orm import Session
 from . import models, schemas, database
 
 # Configuration
-SECRET_KEY = "supersecretkeywow" # In production this should be in env
+SECRET_KEY = os.getenv("SECRET_KEY", "supersecretkeywow") # In production verify this is set!
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
