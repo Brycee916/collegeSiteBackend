@@ -15,6 +15,7 @@ origins = [
     "http://localhost:5200",
     "http://localhost:5205",
     "http://localhost:3000",
+    "*", # Allow all origins for production (Render)
 ]
 
 app.add_middleware(
