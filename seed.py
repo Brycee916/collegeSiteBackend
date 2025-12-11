@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from .database import SessionLocal, engine
-from . import models
+from database import SessionLocal, engine
+import models
 import json
 
 # VERIFIED DATASET FOR 100% ACCURACY
@@ -468,7 +468,7 @@ def seed_data():
             db.commit()
             common_degrees = db.query(models.Degree).all()
 
-        with open("backend/us_colleges_mass.csv", "r", encoding="utf-8") as f:
+        with open("us_colleges_mass.csv", "r", encoding="utf-8") as f:
             reader = csv.DictReader(f)
             for row in reader:
                 original_name = row.get("INSTNM", "").strip()
