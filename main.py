@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import models, database, auth, colleges, careers, career_matches
+from debug_db import router as debug_router
 
 models.Base.metadata.create_all(bind=database.engine)
 
@@ -26,10 +27,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(auth.router, tags=["Authentication"])
-app.include_router(colleges.router, tags=["Colleges"])
-app.include_router(careers.router, tags=["Careers"])
-app.include_router(career_matches.router, tags=["Career Matches"])
+app.include_router(auth.router)
+app.include_router(colleges.router)
+app.include_router(careers.router)
+app.include_router(career_matches.router)
+app.include_router(debug_router, tags=["Debug"])
 
 @app.get("/")
 def read_root():
