@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from . import models, database, auth, colleges, careers, career_matches
+import models, database, auth, colleges, careers, career_matches
 
 models.Base.metadata.create_all(bind=database.engine)
 

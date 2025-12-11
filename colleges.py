@@ -2,7 +2,7 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func, or_
-from . import models, schemas, database, auth
+import models, schemas, database, auth
 
 router = APIRouter()
 

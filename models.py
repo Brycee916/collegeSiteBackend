@@ -1,6 +1,6 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float, Table
 from sqlalchemy.orm import relationship
-from .database import Base
+from database import Base
 
 # Many-to-Many association between College and Degree
 college_degree_association = Table(

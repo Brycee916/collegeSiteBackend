@@ -7,7 +7,7 @@ from jose import JWTError, jwt
 import bcrypt
 
 from sqlalchemy.orm import Session
-from . import models, schemas, database
+import models, schemas, database
 
 # Configuration
 SECRET_KEY = os.getenv("SECRET_KEY", "supersecretkeywow") # In production verify this is set!
